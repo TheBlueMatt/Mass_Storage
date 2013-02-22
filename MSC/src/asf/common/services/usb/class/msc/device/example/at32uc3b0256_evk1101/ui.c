@@ -63,31 +63,31 @@ void ui_wakeup(void)
 
 void ui_start_read(void)
 {
-	LED_On(LED2);
+	LED_On(LED0);
 }
 
 void ui_stop_read(void)
 {
-	LED_Off(LED2);
+	LED_Off(LED0);
 }
 
 void ui_start_write(void)
 {
-	LED_On(LED3);
+	LED_On(LED0);
 }
 
 void ui_stop_write(void)
 {
-	LED_Off(LED3);
+	LED_Off(LED0);
 }
 
 void ui_process(uint16_t framenumber)
 {
 	if ((framenumber % 1000) == 0) {
-		LED_On(LED1);
+		//LED_On(LED1);
 	}
 	if ((framenumber % 1000) == 500) {
-		LED_Off(LED1);
+		//LED_Off(LED1);
 	}
 }
 
