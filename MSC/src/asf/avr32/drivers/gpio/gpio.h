@@ -256,7 +256,7 @@ __always_inline static void gpio_local_enable_pin_output_driver(uint32_t pin)
  *
  * \note \ref gpio_local_init must have been called beforehand.
  */
-__always_inline static bool gpio_local_disable_pin_output_driver(uint32_t pin)
+__always_inline static void gpio_local_disable_pin_output_driver(uint32_t pin)
 {
 	AVR32_GPIO_LOCAL.port[pin >> 5].oderc = 1 << (pin & 0x1F);
 }

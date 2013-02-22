@@ -45,8 +45,8 @@
 
 // ===== System Clock Source Options
 //#define CONFIG_SYSCLK_SOURCE        SYSCLK_SRC_RCSYS
-//#define CONFIG_SYSCLK_SOURCE        SYSCLK_SRC_OSC0
-#define CONFIG_SYSCLK_SOURCE          SYSCLK_SRC_PLL0
+#define CONFIG_SYSCLK_SOURCE          SYSCLK_SRC_OSC0
+//#define CONFIG_SYSCLK_SOURCE        SYSCLK_SRC_PLL0
 
 // ===== PLL0 Options
 #define CONFIG_PLL0_SOURCE            PLL_SRC_OSC0
