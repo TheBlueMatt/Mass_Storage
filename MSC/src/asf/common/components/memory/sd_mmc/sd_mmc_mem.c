@@ -117,7 +117,7 @@ bool sd_mmc_wr_protect(uint8_t slot)
 
 bool sd_mmc_wr_protect_0(void)
 {
-	return sd_mmc_wr_protect(0);
+	return true;
 }
 
 bool sd_mmc_wr_protect_1(void)
