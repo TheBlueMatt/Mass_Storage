@@ -5,7 +5,7 @@
     <ProjectVersion>6.0</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC32</ToolchainName>
     <ProjectGuid>{63a22480-8e2e-4d2d-972d-20ca88c337de}</ProjectGuid>
-    <avrdevice>AT32UC3B0256</avrdevice>
+    <avrdevice>AT32UC3B1256</avrdevice>
     <avrdeviceseries>uc3b</avrdeviceseries>
     <OutputType>Executable</OutputType>
     <Language>C</Language>
@@ -140,6 +140,7 @@
   <documentation help="http://asf.atmel.com/docs/3.5.0/common.services.usb.class.msc.device.example.evk1101/html/index.html" />
 </framework-data>
     </AsfFrameworkConfig>
+    <avrtool />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>

@@ -177,14 +177,14 @@ static struct sd_mmc_card sd_mmc_cards[SD_MMC_MEM_CNT]
 # define SD_MMC_CD_WP(slot, unused) \
 	{.cd_gpio = SD_MMC_##slot##_CD_GPIO, \
 	.wp_gpio = SD_MMC_##slot##_WP_GPIO},
-	MREPEAT(SD_MMC_MEM_CNT, SD_MMC_CD_WP, ~)
+//	MREPEAT(SD_MMC_MEM_CNT, SD_MMC_CD_WP, ~)
 # undef SD_MMC_CD_WP
 }
 #elif (defined SD_MMC_0_CD_GPIO)
  = {
 # define SD_MMC_CD(slot, unused) \
 	{.cd_gpio = SD_MMC_##slot##_CD_GPIO},
-	MREPEAT(SD_MMC_MEM_CNT, SD_MMC_CD, ~)
+//	MREPEAT(SD_MMC_MEM_CNT, SD_MMC_CD, ~)
 # undef SD_MMC_CD
 }
 #endif

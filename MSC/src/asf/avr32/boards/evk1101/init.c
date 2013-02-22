@@ -63,12 +63,12 @@ void board_init(void)
 	gpio_configure_pin(LED2_GPIO,GPIO_DIR_OUTPUT | GPIO_INIT_HIGH);
 	gpio_configure_pin(LED3_GPIO,GPIO_DIR_OUTPUT | GPIO_INIT_HIGH);
 
-	gpio_configure_pin(GPIO_PUSH_BUTTON_0,GPIO_DIR_INPUT);
+/*	gpio_configure_pin(GPIO_PUSH_BUTTON_0,GPIO_DIR_INPUT);
 	gpio_configure_pin(GPIO_PUSH_BUTTON_1,GPIO_DIR_INPUT);
 	gpio_configure_pin(GPIO_JOYSTICK_PUSH,GPIO_DIR_INPUT);
 	gpio_configure_pin(GPIO_JOYSTICK_LEFT,GPIO_DIR_INPUT);
 	gpio_configure_pin(GPIO_JOYSTICK_UP,GPIO_DIR_INPUT);
-	gpio_configure_pin(GPIO_JOYSTICK_DOWN,GPIO_DIR_INPUT);
+	gpio_configure_pin(GPIO_JOYSTICK_DOWN,GPIO_DIR_INPUT);*/
 
 #if defined (CONF_BOARD_AT45DBX)
 	static const gpio_map_t AT45DBX_SPI_GPIO_MAP = {
@@ -102,7 +102,7 @@ void board_init(void)
 #  define SD_MMC_CONFIGURE_CD_WP_PIN(slot, unused) \
 	gpio_configure_pin(SD_MMC_##slot##_CD_GPIO,GPIO_DIR_INPUT); \
 	gpio_configure_pin(SD_MMC_##slot##_WP_GPIO,GPIO_DIR_INPUT);
-	MREPEAT(SD_MMC_SPI_MEM_CNT, SD_MMC_CONFIGURE_CD_WP_PIN, ~)
+//	MREPEAT(SD_MMC_SPI_MEM_CNT, SD_MMC_CONFIGURE_CD_WP_PIN, ~)
 #  undef SD_MMC_CONFIGURE_CD_WP_PIN
 
 #endif
