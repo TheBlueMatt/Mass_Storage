@@ -88,6 +88,8 @@ void ui_start_write(void)
 
 void ui_stop_write(void)
 {
+	if (!errorflag)
+		LED_Off(LED1);
 	LED_Off(LED0);
 }
 
