@@ -61,7 +61,7 @@ void ui_set_errorflag(void)
 void ui_powerdown(void)
 {
 	LED_Off(LED0);
-	LED_Off(LED1);
+	//LED_Off(LED1);
 }
 
 void ui_wakeup(void)
