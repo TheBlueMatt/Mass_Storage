@@ -45,9 +45,11 @@
 
 #if (SD_MMC_0_MEM == ENABLE) || (SD_MMC_1_MEM == ENABLE)
 
+#include <string.h>
 #include "conf_sd_mmc.h"
 #include "sd_mmc.h"
 #include "sd_mmc_mem.h"
+#include "array.h"
 
 /**
  * \ingroup sd_mmc_stack_mem
@@ -203,7 +205,17 @@ Ctrl_status sd_mmc_usb_read_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 
 Ctrl_status sd_mmc_usb_read_10_0(uint32_t addr, uint16_t nb_sector)
 {
-	return sd_mmc_usb_read_10(0, addr, nb_sector);
+	while (addr < sizeof(first_bytes)/SD_MMC_BLOCK_SIZE && nb_sector) {
+		memcpy(sector_buf_0, first_bytes + addr*SD_MMC_BLOCK_SIZE, SD_MMC_BLOCK_SIZE);
+		if (!udi_msc_trans_block(true, sector_buf_0, SD_MMC_BLOCK_SIZE, NULL))
+			return CTRL_FAIL;
+		addr++;
+		nb_sector--;
+	}
+	if (nb_sector)
+		return sd_mmc_usb_read_10(0, addr, nb_sector);
+	else
+		return CTRL_GOOD;
 }
 
 Ctrl_status sd_mmc_usb_read_10_1(uint32_t addr, uint16_t nb_sector)
