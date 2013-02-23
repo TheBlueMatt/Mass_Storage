@@ -48,6 +48,9 @@
 #define USE_ARRAY
 #endif
 
+#define USE_ENCRYPTION
+
+#ifdef USE_ENCRYPTION
 #define CRYPT_START 0
 static const unsigned char AES_KEY[16] = {0xff, 0xff, 0xff, 0xff,
 										  0xff, 0xff, 0xff, 0xff,
@@ -63,6 +66,7 @@ static const unsigned char AES_IV_XOR[16] = {0xff, 0xff, 0xff, 0xff,
 											 0xff, 0xff, 0xff, 0xff,
 											 0xff, 0xff, 0xff, 0xff,
 											 0xff, 0xff, 0xff, 0xff};
+#endif // USE_ENCRYPTION
 
 /* End user-configurable options */
 
@@ -221,6 +225,7 @@ Ctrl_status sd_mmc_usb_read_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 			}
 		}
 		if (!b_first_step) { // Skip first step
+#ifdef USE_ENCRYPTION
 			// Decrypt
 			uint32_t sector = addr + nb_sector - nb_step - 1;
 			if (sector >= CRYPT_START) {
@@ -234,9 +239,13 @@ Ctrl_status sd_mmc_usb_read_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 				aes_cbc_decrypt(((nb_step % 2) == 0) ? sector_buf_1 : sector_buf_0, aes_buf,
 								SD_MMC_BLOCK_SIZE, IV, aes_ctx);
 			}
+#endif // USE_ENCRYPTION
 			// RAM -> USB
 			if (!udi_msc_trans_block(true,
-					sector < CRYPT_START ? (((nb_step % 2) == 0) ? sector_buf_1 : sector_buf_0) : aes_buf,
+#ifdef USE_ENCRYPTION
+					sector >= CRYPT_START ? aes_buf :
+#endif // USE_ENCRYPTION
+					(((nb_step % 2) == 0) ? sector_buf_1 : sector_buf_0),
 					SD_MMC_BLOCK_SIZE, NULL)) {
 				return CTRL_FAIL;
 			}
@@ -266,7 +275,7 @@ Ctrl_status sd_mmc_usb_read_10_0(uint32_t addr, uint16_t nb_sector)
 	if (nb_sector == 0)
 		return CTRL_GOOD;
 	else
-#endif
+#endif // USE_ARRAY
 		return sd_mmc_usb_read_10(0, addr, nb_sector);
 }
 
@@ -279,6 +288,11 @@ Ctrl_status sd_mmc_usb_write_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 {
 	bool b_first_step = true;
 	uint16_t nb_step;
+#ifdef USE_ENCRYPTION
+	aes_encrypt_ctx aes_ctx[1];
+	MD5_CTX md5_ctx;
+	unsigned char IV[16];
+#endif // USE_ENCRYPTION
 
 	switch (sd_mmc_init_write_blocks(slot, addr, nb_sector)) {
 	case SD_MMC_OK:
@@ -299,14 +313,32 @@ Ctrl_status sd_mmc_usb_write_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 			}
 		}
 		if (nb_step) { // Skip last step
+#ifdef USE_ENCRYPTION
+			uint32_t sector = addr + nb_sector - nb_step;
+#endif // USE_ENCRYPTION
 			// USB -> RAM
 			if (!udi_msc_trans_block(false,
-					((nb_step % 2) == 0) ?
-					sector_buf_1 : sector_buf_0,
-					SD_MMC_BLOCK_SIZE,
-					NULL)) {
+#ifdef USE_ENCRYPTION
+					sector >= CRYPT_START ? aes_buf :
+#endif // USE_ENCRYPTION
+					(((nb_step % 2) == 0) ? sector_buf_1 : sector_buf_0),
+					SD_MMC_BLOCK_SIZE, NULL)) {
 				return CTRL_FAIL;
 			}
+#ifdef USE_ENCRYPTION
+			// Encrypt
+			if (sector >= CRYPT_START) {
+				MD5_Init (&md5_ctx);
+				MD5_Update (&md5_ctx, &sector, sizeof(uint32_t));
+				MD5_Final (IV, &md5_ctx);
+				for (uint16_t i = 0; i < sizeof(IV); i++)
+					IV[i] ^= AES_IV_XOR[i];
+				
+				aes_encrypt_key128(AES_KEY, aes_ctx);
+				aes_cbc_encrypt(aes_buf, ((nb_step % 2) == 0) ? sector_buf_1 : sector_buf_0,
+								SD_MMC_BLOCK_SIZE, IV, aes_ctx);
+			}
+#endif // USE_ENCRYPTION
 		}
 		if (!b_first_step) { // Skip first step
 			if (SD_MMC_OK != sd_mmc_wait_end_of_write_blocks()) {
