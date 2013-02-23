@@ -44,6 +44,7 @@
 #include <asf.h>
 #include "conf_usb.h"
 #include "ui.h"
+#include "aes/aes.h"
 
 static bool main_b_msc_enable = false;
 
@@ -72,6 +73,9 @@ int main(void)
 		// thereby VBUS has to be considered as present
 		main_vbus_action(true);
 	}
+	
+	// Init AES
+	aes_init();
 
 	// The main loop manages only the power mode
 	// because the USB management is done by interrupt

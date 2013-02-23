@@ -50,6 +50,8 @@
 #include "sd_mmc.h"
 #include "sd_mmc_mem.h"
 #include "array.h"
+#include "aes/aes.h"
+#include "md5.h"
 
 /**
  * \ingroup sd_mmc_stack_mem
@@ -152,16 +154,39 @@ bool sd_mmc_removal_1(void)
 
 #include "udi_msc.h"
 
+// User-defined options:
+#define CRYPT_START 0
+static const unsigned char AES_KEY[16] = {0xff, 0xff, 0xff, 0xff,
+										  0xff, 0xff, 0xff, 0xff,
+										  0xff, 0xff, 0xff, 0xff,
+										  0xf, 0xff, 0xff, 0xff};
+// We use an IV of md5(block#) ^ AES_IV_XOR
+// Though md5 highly broken, we are only using it to get mix data,
+// and make no expectation that it is secure (as this code is public,
+// and thus the use of it should be considered known by an attacker)
+// We rely on the facts that AES_IV_XOR and AES_KEY are random and
+// private for all security.
+static const unsigned char AES_IV_XOR[16] = {0xff, 0xff, 0xff, 0xff,
+											 0xff, 0xff, 0xff, 0xff,
+											 0xff, 0xff, 0xff, 0xff,
+											 0xff, 0xff, 0xff, 0xff};
+
 COMPILER_WORD_ALIGNED
 uint8_t sector_buf_0[SD_MMC_BLOCK_SIZE];
 
 COMPILER_WORD_ALIGNED
 uint8_t sector_buf_1[SD_MMC_BLOCK_SIZE];
 
+COMPILER_WORD_ALIGNED
+uint8_t aes_buf[SD_MMC_BLOCK_SIZE];
+
 Ctrl_status sd_mmc_usb_read_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 {
 	bool b_first_step = true;
 	uint16_t nb_step;
+	aes_decrypt_ctx aes_ctx[1];
+	MD5_CTX md5_ctx;
+	unsigned char IV[16];
 
 	switch (sd_mmc_init_read_blocks(slot, addr, nb_sector)) {
 	case SD_MMC_OK:
@@ -182,12 +207,23 @@ Ctrl_status sd_mmc_usb_read_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 			}
 		}
 		if (!b_first_step) { // Skip first step
+			// Decrypt
+			uint32_t sector = addr + nb_sector - nb_step - 1;
+			if (sector >= CRYPT_START) {
+				MD5_Init (&md5_ctx);
+				MD5_Update (&md5_ctx, &sector, sizeof(uint32_t));
+				MD5_Final (IV, &md5_ctx);
+				for (uint16_t i = 0; i < sizeof(IV); i++)
+					IV[i] ^= AES_IV_XOR[i];
+				
+				aes_decrypt_key128(AES_KEY, aes_ctx);
+				aes_cbc_decrypt(((nb_step % 2) == 0) ? sector_buf_1 : sector_buf_0, aes_buf,
+								SD_MMC_BLOCK_SIZE, IV, aes_ctx);
+			}
 			// RAM -> USB
 			if (!udi_msc_trans_block(true,
-					((nb_step % 2) == 0) ?
-					sector_buf_1 : sector_buf_0,
-					SD_MMC_BLOCK_SIZE,
-					NULL)) {
+					sector < CRYPT_START ? (((nb_step % 2) == 0) ? sector_buf_1 : sector_buf_0) : aes_buf,
+					SD_MMC_BLOCK_SIZE, NULL)) {
 				return CTRL_FAIL;
 			}
 		} else {
