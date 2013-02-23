@@ -42,11 +42,29 @@
  */
 
 
-/* User-configureable options */
+/* User-configurable options */
 #define READ_ONLY
 #if 1 && defined(READ_ONLY)
 #define USE_ARRAY
 #endif
+
+#define CRYPT_START 0
+static const unsigned char AES_KEY[16] = {0xff, 0xff, 0xff, 0xff,
+										  0xff, 0xff, 0xff, 0xff,
+										  0xff, 0xff, 0xff, 0xff,
+										  0xff, 0xff, 0xff, 0xff};
+// We use an IV of md5(block#) ^ AES_IV_XOR
+// Though md5 highly broken, we are only using it to get mix data,
+// and make no expectation that it is secure (as this code is public,
+// and thus the use of it should be considered known by an attacker)
+// We rely on the facts that AES_IV_XOR and AES_KEY are random and
+// private for all security.
+static const unsigned char AES_IV_XOR[16] = {0xff, 0xff, 0xff, 0xff,
+											 0xff, 0xff, 0xff, 0xff,
+											 0xff, 0xff, 0xff, 0xff,
+											 0xff, 0xff, 0xff, 0xff};
+
+/* End user-configurable options */
 
 #include "conf_access.h"
 
@@ -166,23 +184,6 @@ bool sd_mmc_removal_1(void)
  */
 
 #include "udi_msc.h"
-
-// User-defined options:
-#define CRYPT_START 0
-static const unsigned char AES_KEY[16] = {0xff, 0xff, 0xff, 0xff,
-										  0xff, 0xff, 0xff, 0xff,
-										  0xff, 0xff, 0xff, 0xff,
-										  0xf, 0xff, 0xff, 0xff};
-// We use an IV of md5(block#) ^ AES_IV_XOR
-// Though md5 highly broken, we are only using it to get mix data,
-// and make no expectation that it is secure (as this code is public,
-// and thus the use of it should be considered known by an attacker)
-// We rely on the facts that AES_IV_XOR and AES_KEY are random and
-// private for all security.
-static const unsigned char AES_IV_XOR[16] = {0xff, 0xff, 0xff, 0xff,
-											 0xff, 0xff, 0xff, 0xff,
-											 0xff, 0xff, 0xff, 0xff,
-											 0xff, 0xff, 0xff, 0xff};
 
 COMPILER_WORD_ALIGNED
 uint8_t sector_buf_0[SD_MMC_BLOCK_SIZE];
