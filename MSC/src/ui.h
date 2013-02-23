@@ -53,6 +53,9 @@ void ui_powerdown(void);
 //! \brief Exits the user interface of power down mode
 void ui_wakeup(void);
 
+//! \Sets the error LCD to on
+void ui_set_errorflag(void);
+
 //! \name Callback to show the MSC read and write access
 //! @{
 void ui_start_read(void);

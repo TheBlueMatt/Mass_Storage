@@ -44,10 +44,18 @@
 #include <asf.h>
 #include "ui.h"
 
+static bool errorflag = false;
+
 void ui_init(void)
 {
-	LED_On(LED0);
-	LED_Off(LED1);
+	LED_Off(LED0);
+	LED_On(LED1);
+}
+
+void ui_set_errorflag(void)
+{
+	errorflag = true;
+	LED_On(LED1);
 }
 
 void ui_powerdown(void)
@@ -68,6 +76,8 @@ void ui_start_read(void)
 
 void ui_stop_read(void)
 {
+	if (!errorflag)
+		LED_Off(LED1);
 	LED_Off(LED0);
 }
 
