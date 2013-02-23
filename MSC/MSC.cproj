@@ -476,6 +476,7 @@
     <Folder Include="src\asf\common\utils\" />
     <Folder Include="src\asf\common\utils\interrupt\" />
     <Folder Include="src\config\" />
+    <Folder Include="src\aes" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\asf\avr32\utils\linker_scripts\at32uc3b\0256\gcc\link_uc3b0256.lds">
@@ -831,6 +832,33 @@
     <None Include="src\asf.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\aes\aes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\aes\aescrypt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\aes\aeskey.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\aes\aesopt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\aes\aestab.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\aes\aestab.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\aes\aes_modes.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\aes\brg_endian.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\aes\brg_types.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\array.c">
       <SubType>compile</SubType>
     </Compile>
@@ -916,6 +944,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\md5.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\md5.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\memories_initialization_uc3.c">
