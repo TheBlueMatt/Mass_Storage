@@ -49,6 +49,12 @@
 #define USE_ARRAY
 #endif
 
+// Warning: using encryption under write-heavy load with the CPU clock
+// set to the full 60MHz appears to be unstable on my system.  If you
+// anticipate lots of writing for extended periods, you may wish to set
+// CONFIG_PLL1_MUL to 4 (ie CPU freq to 48 Mhz) or lower.  This does
+// have some impact on performance, but not nearly proportional to the
+// drop in CPU speed.
 #define USE_ENCRYPTION
 #ifdef USE_ENCRYPTION
 #define CRYPT_START 0
