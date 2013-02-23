@@ -41,6 +41,13 @@
  *
  */
 
+
+/* User-configureable options */
+#define READ_ONLY
+#if 1 && defined(READ_ONLY)
+#define USE_ARRAY
+#endif
+
 #include "conf_access.h"
 
 #if (SD_MMC_0_MEM == ENABLE) || (SD_MMC_1_MEM == ENABLE)
@@ -49,9 +56,11 @@
 #include "conf_sd_mmc.h"
 #include "sd_mmc.h"
 #include "sd_mmc_mem.h"
-#include "array.h"
 #include "aes/aes.h"
 #include "md5.h"
+#ifdef USE_ARRAY
+#include "array.h"
+#endif
 
 /**
  * \ingroup sd_mmc_stack_mem
@@ -121,7 +130,11 @@ bool sd_mmc_wr_protect(uint8_t slot)
 
 bool sd_mmc_wr_protect_0(void)
 {
+#ifdef READ_ONLY
 	return true;
+#else
+	return false;
+#endif
 }
 
 bool sd_mmc_wr_protect_1(void)
@@ -241,6 +254,7 @@ Ctrl_status sd_mmc_usb_read_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 
 Ctrl_status sd_mmc_usb_read_10_0(uint32_t addr, uint16_t nb_sector)
 {
+#ifdef USE_ARRAY
 	while (addr < sizeof(first_bytes)/SD_MMC_BLOCK_SIZE && nb_sector) {
 		memcpy(sector_buf_0, first_bytes + addr*SD_MMC_BLOCK_SIZE, SD_MMC_BLOCK_SIZE);
 		if (!udi_msc_trans_block(true, sector_buf_0, SD_MMC_BLOCK_SIZE, NULL))
@@ -248,10 +262,11 @@ Ctrl_status sd_mmc_usb_read_10_0(uint32_t addr, uint16_t nb_sector)
 		addr++;
 		nb_sector--;
 	}
-	if (nb_sector)
-		return sd_mmc_usb_read_10(0, addr, nb_sector);
-	else
+	if (nb_sector == 0)
 		return CTRL_GOOD;
+	else
+#endif
+		return sd_mmc_usb_read_10(0, addr, nb_sector);
 }
 
 Ctrl_status sd_mmc_usb_read_10_1(uint32_t addr, uint16_t nb_sector)
