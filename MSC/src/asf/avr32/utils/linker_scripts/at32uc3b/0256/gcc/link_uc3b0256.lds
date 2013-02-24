@@ -57,7 +57,8 @@ ENTRY(_start)
 
 MEMORY
 {
-  FLASH (rxai!w) : ORIGIN = 0x80000000, LENGTH = 0x00040000
+  FLASH (rxai!w) : ORIGIN = 0x80000000, LENGTH = 0x0003FF00
+  USERFLASH (rxai!w) : ORIGIN = 0x8003FF00, LENGTH = 0x00000100
   INTRAM (wxa!ri) : ORIGIN = 0x00000004, LENGTH = 0x00007FFC
   USERPAGE : ORIGIN = 0x80800000, LENGTH = 0x00000200
 }
@@ -65,6 +66,7 @@ MEMORY
 PHDRS
 {
   FLASH PT_LOAD;
+  USERFLASH PT_LOAD;
   INTRAM_ALIGN PT_NULL;
   INTRAM_AT_FLASH PT_LOAD;
   INTRAM PT_NULL;
@@ -271,5 +273,6 @@ SECTIONS
     _estack = .;
   } >INTRAM AT>INTRAM :INTRAM
   .userpage       : { *(.userpage .userpage.*) } >USERPAGE AT>USERPAGE :USERPAGE
+  .userflash       : { *(.userflash .userflash.*) } >USERFLASH AT>USERFLASH :USERFLASH
   /DISCARD/ : { *(.note.GNU-stack) }
 }

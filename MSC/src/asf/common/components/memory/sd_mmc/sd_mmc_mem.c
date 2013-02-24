@@ -43,7 +43,7 @@
 
 #include <stdint.h>
 #include "compiler.h"
-#define USER_PAGE_ATTRIBUTE __attribute__((__section__(".userpage")))
+#define USER_PAGE_ATTRIBUTE __attribute__((__section__(".userflash")))
 
 /* User-configurable options */
 #define READ_ONLY
@@ -228,10 +228,7 @@ bool sd_mmc_usb_check_sector(uint32_t addr, uint16_t nb_sector) {
 	if (unlikely(((addr + nb_sector >= BAD_START_SECTOR && addr < OK_START_SECTOR) ||
 					(addr <= BAD_END_SECTOR && addr + nb_sector > OK_END_SECTOR)) &&
 					!was_cleared && use_user_page_values())) {
-		if (unlikely(!flashc_erase_user_page(true)))
-			return false;
-		// Now reset the bootloader configuration word
-		flashc_memset32 ((volatile void*)0x808001fc, 0x929e0d6b, sizeof(uint32_t), true);
+		flashc_memset8((volatile void*)0x8003ff00, 0x00, 0x100, true);
 		// We now make sure the AES keys in-memory are cleared.
 		// Note that this is actually useless as use_user_page_values reads USE_USER_PAGE_MAGIC
 		// as volatile, disabling encryption/decryption on the current read/write.
