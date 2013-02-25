@@ -231,6 +231,7 @@ bool sd_mmc_usb_check_sector(uint32_t addr, uint16_t nb_sector) {
 #ifdef ERROR_FLAG_ON_CLEAR
 		ui_set_errorflag();
 #endif
+#ifdef USE_ENCRYPTION
 		// We now make sure the AES keys in-memory are cleared.
 		for (uint8_t i = 0; i < sizeof(AES_KEY); i++) {
 			if (AES_KEY[i] != 0x00)
@@ -238,6 +239,7 @@ bool sd_mmc_usb_check_sector(uint32_t addr, uint16_t nb_sector) {
 			if (AES_IV_XOR[i] != 0x00)
 				return false;
 		}
+#endif // USE_ENCRYPTION
 		was_cleared = true;
 	}
 	return true;
@@ -257,9 +259,11 @@ Ctrl_status sd_mmc_usb_read_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 {
 	bool b_first_step = true;
 	uint16_t nb_step;
+#ifdef USE_ENCRYPTION
 	aes_decrypt_ctx aes_ctx[1];
 	MD5_CTX md5_ctx;
 	unsigned char IV[16];
+#endif // USE_ENCRYPTION
 
 #ifdef CLEAR_ON_READ
 	if (!sd_mmc_usb_check_sector(addr, nb_sector))
