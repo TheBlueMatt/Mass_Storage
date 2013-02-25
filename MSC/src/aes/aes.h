@@ -94,7 +94,7 @@ AES_RETURN aes_init(void);
 #if defined( AES_ENCRYPT )
 
 #if defined( AES_128 ) || defined( AES_VAR)
-AES_RETURN aes_encrypt_key128(const unsigned char *key, aes_encrypt_ctx cx[1]);
+AES_RETURN aes_encrypt_key128(const volatile unsigned char *key, aes_encrypt_ctx cx[1]);
 #endif
 
 #if defined( AES_192 ) || defined( AES_VAR)
@@ -116,7 +116,7 @@ AES_RETURN aes_encrypt(const unsigned char *in, unsigned char *out, const aes_en
 #if defined( AES_DECRYPT )
 
 #if defined( AES_128 ) || defined( AES_VAR)
-AES_RETURN aes_decrypt_key128(const unsigned char *key, aes_decrypt_ctx cx[1]);
+AES_RETURN aes_decrypt_key128(const volatile unsigned char *key, aes_decrypt_ctx cx[1]);
 #endif
 
 #if defined( AES_192 ) || defined( AES_VAR)

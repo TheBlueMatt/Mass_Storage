@@ -72,7 +72,7 @@ extern "C"
     k[4*(i)+7] = ss[3] ^= ss[2]; \
 }
 
-AES_RETURN aes_encrypt_key128(const unsigned char *key, aes_encrypt_ctx cx[1])
+AES_RETURN aes_encrypt_key128(const volatile unsigned char *key, aes_encrypt_ctx cx[1])
 {   uint_32t    ss[4];
 
     cx->ks[0] = ss[0] = word_in(key, 0);
@@ -309,7 +309,7 @@ AES_RETURN aes_encrypt_key(const unsigned char *key, int key_len, aes_encrypt_ct
 
 #endif
 
-AES_RETURN aes_decrypt_key128(const unsigned char *key, aes_decrypt_ctx cx[1])
+AES_RETURN aes_decrypt_key128(const volatile unsigned char *key, aes_decrypt_ctx cx[1])
 {   uint_32t    ss[5];
 #if defined( d_vars )
         d_vars;

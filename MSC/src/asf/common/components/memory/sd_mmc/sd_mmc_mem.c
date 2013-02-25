@@ -43,7 +43,7 @@
 
 #include <stdint.h>
 #include "compiler.h"
-#define USER_PAGE_ATTRIBUTE __attribute__((__section__(".userflash")))
+#define USER_PAGE_ATTRIBUTE volatile __attribute__((__section__(".userflash")))
 
 /* User-configurable options */
 #define READ_ONLY
@@ -209,8 +209,7 @@ bool sd_mmc_removal_1(void)
 
 #include "udi_msc.h"
 
-uint8_t user_page_flags = 0;
-static volatile USER_PAGE_ATTRIBUTE uint16_t USE_USER_PAGE_MAGIC = 0x69e9;
+static USER_PAGE_ATTRIBUTE uint16_t USE_USER_PAGE_MAGIC = 0x69e9;
 bool use_user_page_values(void);
 inline bool use_user_page_values(void) {
 	if (USE_USER_PAGE_MAGIC == 0x69e9)
@@ -229,15 +228,17 @@ bool sd_mmc_usb_check_sector(uint32_t addr, uint16_t nb_sector) {
 					(addr <= BAD_END_SECTOR && addr + nb_sector > OK_END_SECTOR)) &&
 					!was_cleared && use_user_page_values())) {
 		flashc_memset8((volatile void*)0x8003ff00, 0x00, 0x100, true);
-		// We now make sure the AES keys in-memory are cleared.
-		// Note that this is actually useless as use_user_page_values reads USE_USER_PAGE_MAGIC
-		// as volatile, disabling encryption/decryption on the current read/write.
-		memset(AES_KEY, 0xff, sizeof(AES_KEY));
-		memset(AES_IV_XOR, 0xff, sizeof(AES_KEY));
-		was_cleared = true;
 #ifdef ERROR_FLAG_ON_CLEAR
 		ui_set_errorflag();
 #endif
+		// We now make sure the AES keys in-memory are cleared.
+		for (uint8_t i = 0; i < sizeof(AES_KEY); i++) {
+			if (AES_KEY[i] != 0x00)
+				return false;
+			if (AES_IV_XOR[i] != 0x00)
+				return false;
+		}
+		was_cleared = true;
 	}
 	return true;
 }
