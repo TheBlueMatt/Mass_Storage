@@ -53,8 +53,8 @@
  */
 
 //! Device definition (mandatory)
-#define  USB_DEVICE_VENDOR_ID             USB_VID_ATMEL
-#define  USB_DEVICE_PRODUCT_ID            USB_PID_ATMEL_ASF_MSC
+#define  USB_DEVICE_VENDOR_ID             0x090C
+#define  USB_DEVICE_PRODUCT_ID            0x1000
 #define  USB_DEVICE_MAJOR_VERSION         1
 #define  USB_DEVICE_MINOR_VERSION         0
 #define  USB_DEVICE_POWER                 100 // Consumption on Vbus line (mA)
@@ -65,9 +65,9 @@
 //	(USB_CONFIG_ATTR_REMOTE_WAKEUP|USB_CONFIG_ATTR_BUS_POWERED)
 
 //! USB Device string definitions (Optional)
-#define  USB_DEVICE_MANUFACTURE_NAME      "ATMEL ASF"
-#define  USB_DEVICE_PRODUCT_NAME          "MSC"
-#define  USB_DEVICE_SERIAL_NAME           "123123123123"	// Disk SN for MSC
+#define  USB_DEVICE_MANUFACTURE_NAME      "SMI Corporation"
+#define  USB_DEVICE_PRODUCT_NAME          "64MB QDI U2 DISK"
+#define  USB_DEVICE_SERIAL_NAME           "BC05573000007814"	// Disk SN for MSC
 
 /**
  * Device speeds support
@@ -116,9 +116,9 @@
 
 //! Vendor name and Product version of MSC interface
 #define UDI_MSC_GLOBAL_VENDOR_ID            \
-   'A', 'T', 'M', 'E', 'L', ' ', ' ', ' '
+   'S', 'M', 'I', ' ', 'C', 'o', 'r', 'p'
 #define UDI_MSC_GLOBAL_PRODUCT_VERSION            \
-   '1', '.', '0', '0'
+   '1', '0', '.', '0'
 
 //! Interface callback definition
 #define  UDI_MSC_ENABLE_EXT()          main_msc_enable()

@@ -110,7 +110,7 @@
 #define Lun_2_usb_write_10                      sd_mmc_usb_write_10_0
 #define Lun_2_mem_2_ram                         sd_mmc_mem_2_ram_0
 #define Lun_2_ram_2_mem                         sd_mmc_ram_2_mem_0
-#define LUN_2_NAME                              "\"SD/MMC Card Slot 0\""
+#define LUN_2_NAME                              "\"64MB QDI U2 DISK\""
 //! @}
 
 /*! \name USB LUNs Definitions
