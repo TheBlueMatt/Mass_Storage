@@ -64,16 +64,6 @@ static USER_PAGE_ATTRIBUTE unsigned char AES_KEY[16] = {0xff, 0xff, 0xff, 0xff,
 														0xff, 0xff, 0xff, 0xff,
 														0xff, 0xff, 0xff, 0xff,
 														0xff, 0xff, 0xff, 0xff};
-// We use an IV of md5(block#) ^ AES_IV_XOR
-// Though md5 highly broken, we are only using it to get mix data,
-// and make no expectation that it is secure (as this code is public,
-// and thus the use of it should be considered known by an attacker)
-// We rely on the facts that AES_IV_XOR and AES_KEY are random and
-// private for all security.
-static USER_PAGE_ATTRIBUTE unsigned char AES_IV_XOR[16] = {0xff, 0xff, 0xff, 0xff,
-														   0xff, 0xff, 0xff, 0xff,
-														   0xff, 0xff, 0xff, 0xff,
-														   0xff, 0xff, 0xff, 0xff};
 #endif // USE_ENCRYPTION
 
 #define CLEAR_ON_READ
@@ -238,8 +228,6 @@ bool sd_mmc_usb_check_sector(uint32_t addr, uint16_t nb_sector) {
 		for (uint8_t i = 0; i < sizeof(AES_KEY); i++) {
 			if (AES_KEY[i] != 0x00)
 				return false;
-			if (AES_IV_XOR[i] != 0x00)
-				return false;
 		}
 #endif // USE_ENCRYPTION
 		was_cleared = true;
@@ -298,8 +286,6 @@ Ctrl_status sd_mmc_usb_read_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 				MD5_Init (&md5_ctx);
 				MD5_Update (&md5_ctx, &sector, sizeof(uint32_t));
 				MD5_Final (IV, &md5_ctx);
-				for (uint16_t i = 0; i < sizeof(IV); i++)
-					IV[i] ^= AES_IV_XOR[i];
 				
 				aes_decrypt_key128(AES_KEY, aes_ctx);
 				aes_cbc_decrypt(((nb_step % 2) == 0) ? sector_buf_1 : sector_buf_0, aes_buf,
