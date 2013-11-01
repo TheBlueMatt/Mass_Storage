@@ -469,8 +469,6 @@ Ctrl_status sd_mmc_usb_write_10(uint8_t slot, uint32_t addr, uint16_t nb_sector)
 				MD5_Init (&md5_ctx);
 				MD5_Update (&md5_ctx, &sector, sizeof(uint32_t));
 				MD5_Final (IV, &md5_ctx);
-				for (uint16_t i = 0; i < sizeof(IV); i++)
-					IV[i] ^= AES_IV_XOR[i];
 				
 				aes_encrypt_key128(AES_KEY, aes_ctx);
 				aes_cbc_encrypt(aes_buf, ((nb_step % 2) == 0) ? sector_buf_1 : sector_buf_0,
