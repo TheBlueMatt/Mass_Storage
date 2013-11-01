@@ -129,8 +129,10 @@ Ctrl_status sd_mmc_test_unit_ready(uint8_t slot)
 
 Ctrl_status sd_mmc_test_unit_ready_0(void)
 {
+	ui_start_test();
 	Ctrl_status status;
 	while ((status = sd_mmc_test_unit_ready(0)) == CTRL_BUSY || status == CTRL_NO_PRESENT) ;
+	ui_stop_test();
 	return sd_mmc_test_unit_ready(0);
 }
 

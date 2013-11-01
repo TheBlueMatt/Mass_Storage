@@ -93,6 +93,17 @@ void ui_stop_write(void)
 	LED_Off(LED0);
 }
 
+void ui_start_test(void)
+{
+	LED_On(LED1);
+}
+
+void ui_stop_test(void)
+{
+	if (!errorflag)
+		LED_Off(LED1);
+}
+
 void ui_process(uint16_t framenumber)
 {
 	if ((framenumber % 1000) == 0) {

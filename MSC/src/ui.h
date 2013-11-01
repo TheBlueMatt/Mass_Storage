@@ -56,6 +56,12 @@ void ui_wakeup(void);
 //! \Sets the error LCD to on
 void ui_set_errorflag(void);
 
+//! \name Callback to show test_unit_ready access
+//! @{
+void ui_start_test(void);
+void ui_stop_test(void);
+//! @}
+
 //! \name Callback to show the MSC read and write access
 //! @{
 void ui_start_read(void);
