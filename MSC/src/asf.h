@@ -62,9 +62,6 @@
 // From module: Delay routines
 #include <delay.h>
 
-// From module: EVK1101
-#include <led.h>
-
 // From module: FLASHC - Flash Controller
 #include <flashc.h>
 
@@ -89,9 +86,6 @@
 
 // From module: Part identification macros
 #include <parts.h>
-
-// From module: SD/MMC stack + Memory Control Access (aka ctrl_access, required for file system or USB)
-#include <sd_mmc_mem.h>
 
 // From module: SD/MMC stack on SPI interface
 #include <sd_mmc.h>
